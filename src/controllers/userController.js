@@ -9,34 +9,34 @@ const jwt = require('jsonwebtoken')
 let { isValidEmail, isValidPassword } = isValid
 
 const createUser = async function (req, res) {
-  try {
-      let data = req.body;
+  // try {
+  //     let data = req.body;
 
-      const { fname, lname, email, phone, password, address } = data;
+  //     const { fname, lname, email, phone, password, address } = data;
 
-      if (!isValid.isValidRequestBody(data)) {
-          return res.status(400).send({ status: false, message: "Please provide data in the request body!", })
-      }
+  //     if (!isValid.isValidRequestBody(data)) {
+  //         return res.status(400).send({ status: false, message: "Please provide data in the request body!", })
+  //     }
 
-      if (!fname) {
-          return res.status(400).send({ status: false, message: "First Name is required!" });
-      }
-      if (!isValid.isValidName(fname)) {
-          return res.status(400).send({ status: false, message: "invalid First Name " })
-      }
+  //     if (!fname) {
+  //         return res.status(400).send({ status: false, message: "First Name is required!" });
+  //     }
+  //     if (!isValid.isValidName(fname)) {
+  //         return res.status(400).send({ status: false, message: "invalid First Name " })
+  //     }
 
-      if (!lname) {
-          return res.status(400).send({ status: false, message: "Last Name is required!" })
-      }
-      if (!isValid.isValidName(lname)) {
-          return res.status(400).send({ status: false, message: "invalid Last Name " })
-      }
+  //     if (!lname) {
+  //         return res.status(400).send({ status: false, message: "Last Name is required!" })
+  //     }
+  //     if (!isValid.isValidName(lname)) {
+  //         return res.status(400).send({ status: false, message: "invalid Last Name " })
+  //     }
 
-      if (!email) {
-          return res.status(400).send({ status: false, message: "Email is required!" });
-      }
-      if (!isValid.isValidEmail(email)) {
-          return res.status(400).send({ status: false, message: "Invalid email id" })
+  //     if (!email) {
+  //         return res.status(400).send({ status: false, message: "Email is required!" });
+  //     }
+  //     if (!isValid.isValidEmail(email)) {
+  //         return res.status(400).send({ status: false, message: "Invalid email id" })
   try {
     let data = req.body;
     let files = req.files
@@ -209,11 +209,11 @@ const createUser = async function (req, res) {
 }
   
 
-  module.exports={createUser}
-  catch (error) {
-    return res.status(500).send({ message: error.message });
-  }
-}
+//   module.exports={createUser}
+//   catch (error) {
+//     return res.status(500).send({ message: error.message });
+//   }
+// }
 ////////////////////////////////LOGIN USER///////////////////////////////////////////////////////////////////
 
 const userLogin = async function (req, res) {
