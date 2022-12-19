@@ -1,31 +1,39 @@
 const aws = require('aws-sdk')
 aws.config.update({
-    accessKeyId: "AKIAY3L35MCRRMC6253G", // id
-    secretAccessKey: "88NOFLHQrap/1G2LqUy9YkFbFRe/GNERsCyKvTZA", // your secret password
-    region: "ap-south-1" // Mumbai region
-});
+    accessKeyId: "AKIAY3L35MCRZNIRGT6N",
+    secretAccessKey: "9f+YFBVcSjZWM6DG9R4TUN8k8TGe4X+lXmO4jPiU",
+    region: "ap-south-1"
+})
 
-let uploadFile = async(file) => {
-    return new Promise(function(resolve, reject) {
-        // Create S3 service object
-        let s3 = new aws.S3({ apiVersion: "2006-03-01" });
+let uploadFile = async (file) => {
+    return new Promise(function (resolve, reject) {
+        // this function will upload file to aws and return the link
+        let s3 = new aws.S3({ apiVersion: '2006-03-01' }); // we will be using the s3 service of aws
+
         var uploadParams = {
-            ACL: "public-read", // this file is publically readable
-            Bucket: "classroom-training-bucket",
-            Key: "group3/products_management/" + new Date() + file.originalname,
-            Body: file.buffer,
-        };
-        // Callback - function provided as the second parameter ( most oftenly)
-        s3.upload(uploadParams, function(err, data) {
+            ACL: "public-read",
+            Bucket: "classroom-training-bucket",  //HERE
+            Key: "abc/" + file.originalname, //HERE 
+            Body: file.buffer
+        }
+
+
+        s3.upload(uploadParams, function (err, data) {
             if (err) {
-                return reject({ "error": err });
+                return reject({ "error": err })
             }
             console.log(data)
-            console.log(`File uploaded successfully. ${data.Location}`);
-            return resolve(data.Location);
-        });
-    });
-};
+            console.log("file uploaded succesfully")
+            return resolve(data.Location)
+        })
+
+        // let data= await s3.upload( uploadParams)
+        // if( data) return data.Location
+        // else return "there is an error"
+
+    })
+}
+
 module.exports = {
     uploadFile
 }

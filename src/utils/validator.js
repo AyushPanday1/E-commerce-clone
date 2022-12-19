@@ -43,3 +43,4 @@ const isValidStreet = function (street){
 }
 
 module.exports = {isValidRequestBody,isValidName,validatePhone,isValidEmail,isValidPassword,validPin,isValidStreet}
+
