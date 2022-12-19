@@ -1,6 +1,8 @@
 const userModel = require("../models/userModel")
 const isValid = require("../utils/validator")
 const config = require('../utils/awsConfig')
+// const bcrypt = require('bcrypt')
+// const saltRounds = 10
 
 
 
@@ -94,7 +96,7 @@ const createUser = async function (req, res) {
     data.profileImage=uploadedFileURL
 
   
-
+   // const encryptedPassword = await bcrypt.hash(password,saltRounds) //encrypting password by using bcrypt.
     
 
       const userDetails = await userModel.create(data);
