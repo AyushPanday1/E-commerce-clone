@@ -236,6 +236,12 @@ const userLogin = async function (req, res) {
     if (!findUser) {
       return res.status(404).send({ status: false, message: "email or password is not correct" })
     }
+    let hashPasswordDB = findUser.password
+    bcrypt.compare(password, hashPasswordDB, function(err,result){
+      if(result!= true){
+        return res.status(400).send({status : false, message:"invalid password"})
+      }
+   
     let createToken = jwt.sign(
       {
         userId: findUser.id.toString(),
@@ -247,6 +253,7 @@ const userLogin = async function (req, res) {
       token: createToken
     }
     return res.status(201).send({ status: true, message: "user login successfully", data: finalResponse })
+  })
   }
   catch (error) {
     res.status(500).send({ status: false, message: error.message })
