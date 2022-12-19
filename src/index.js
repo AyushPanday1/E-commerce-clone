@@ -2,7 +2,7 @@ const express = require('express');
 
 const mongoose = require('mongoose');
 
-const route = require('./route/route.js')
+const route = require('./routes/route.js')
 
 const app = express();
 app.use(express.json())
@@ -13,7 +13,7 @@ mongoose.connect("mongodb+srv://AyushPanday:AyushPan123@cluster0.eixapeq.mongodb
 .catch((error)=>console.log(error))
 
 
-app.use(route);
+app.use('/', route);
 
 const port = 3000;
 
