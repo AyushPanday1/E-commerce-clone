@@ -28,7 +28,10 @@ const isValidPassword = function (password) {
     return passwordRegex.test(password);
   };
 
-
+  const isValidFile = (img) => {
+    const regex = /(\/*\.(?:png|gif|webp|jpeg|jpg))/.test(img)
+    return regex
+  }
 
 
 const validPin = function(pincode){
@@ -42,5 +45,5 @@ const isValidStreet = function (street){
 
 }
 
-module.exports = {isValidRequestBody,isValidName,validatePhone,isValidEmail,isValidPassword,validPin,isValidStreet}
+module.exports = {isValidRequestBody,isValidName,validatePhone,isValidEmail,isValidPassword,validPin,isValidStreet,isValidFile}
 
