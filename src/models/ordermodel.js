@@ -10,15 +10,14 @@ const orderSchema = new mongoose.Schema({
     items: [{
         productId: {
             type: ObjectId,
-            ref: 'Product',
+            ref: 'ProductModel',
             required: true
         },
         quantity: {
             type: Number,
             required: true,
             min: 1
-        },
-        _id: false
+        }
     }],
     totalPrice: {
         type: Number,
@@ -50,4 +49,4 @@ const orderSchema = new mongoose.Schema({
     },
 }, { timestamps: true });
 
-module.exports = mongoose.model('Order', orderSchema);
+module.exports = mongoose.model('OrderModel', orderSchema);
