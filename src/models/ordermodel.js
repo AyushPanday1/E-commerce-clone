@@ -5,7 +5,7 @@ const orderSchema = new mongoose.Schema({
     userId: {
         type: ObjectId,
         ref: 'Usermodel',
-         require: true
+        require: true
     },
     items: [{
         productId: {
@@ -15,8 +15,8 @@ const orderSchema = new mongoose.Schema({
         },
         quantity: {
             type: Number,
-             required: true,
-             min: 1
+            required: true,
+            min: 1
         },
         _id: false
     }],
