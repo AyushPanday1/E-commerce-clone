@@ -111,6 +111,53 @@ const createUser = async function (req, res) {
       return res.status(500).send({ message: error.message });
   }
 }
+
+
+
+
+const userLogin = async function (req, res) {
+    try {
+      let data = req.body
+      let { email, password } = data
+      if (Object.keys(data).length == 0) {
+        res.status(400).send({ status: false, message: "body can not be empty" })
+      }
+      if (!email || !password) {
+        return res.status(400).send({ status: false, message: "email and password is mandatory" })
+      }
+      if (!isValidEmail(email)) {
+        return res.status(400).send({ status: false, message: "please enter a valid email address" })
+      }
+      if (!isValidPassword(password)) {
+        return res.status(400).send({ status: false, message: "password must be from length 8-15 characters " })
+      }
+      let findUser = await userModel.findOne({ email: email, password: password })
+      if (!findUser) {
+        return res.status(404).send({ status: false, message: "email or password is not correct" })
+      }
+      let hashPasswordDB = findUser.password
+      bcrypt.compare(password, hashPasswordDB, function(err,result){
+        if(result!= true){
+          return res.status(400).send({status : false, message:"invalid password"})
+        }
+     
+      let createToken = jwt.sign(
+        {
+          userId: findUser.id.toString(),
+        }, "user-secret-token", { expiresIn: "30m" });
+  
+      res.setHeader('x-auth-key', createToken)
+      let finalResponse = {
+        userId: findUser.id,
+        token: createToken
+      }
+      return res.status(201).send({ status: true, message: "user login successfully", data: finalResponse })
+    })
+    }
+    catch (error) {
+      res.status(500).send({ status: false, message: error.message })
+    }
+  }
   
 
-  module.exports={createUser}
+  module.exports={createUser,userLogin}
