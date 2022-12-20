@@ -8,5 +8,5 @@ const isEmpty = function(value){
 
 /*VALIDATION FOR EMPTY REQ. BODY_________________________ */
 const isValidBody = function (data) {
-    return Object.keys(data).length > 0;
+    return Object.keys(data).length == 0;
   };
