@@ -7,7 +7,7 @@ const updateUser = async function (req, res) {
         let userId = req.params.userId;
         if (!userId) return res.status(400).send({ status: false, message: "Please pass userid in params!!" })
 
-        if (!isValidRequestBody(data) || !files) return res.status(400).send({status: false, message: "Please provide data in the request body or files!!" });
+        if (!isValidRequestBody(data) || !(isValidFile(files))) return res.status(400).send({status: false, message: "Please provide data in the request body or files!!" });
 
 
         let data = req.body;
