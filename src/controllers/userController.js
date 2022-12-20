@@ -1,7 +1,7 @@
 const userModel = require("../models/userModel")
 const isValid = require("../utils/validator")
 const aws = require('../aws/awsConfig')
-// const bcrypt = require('bcrypt')
+const bcrypt = require('bcrypt')
 // const saltRounds = 10
 
 
@@ -67,9 +67,9 @@ const createUser = async function (req, res) {
     if (!password) {
       return res.status(400).send({ status: false, message: "Password is required!" });
     }
-    // if (!isValid.isValidPassword(password)) {
-    //     return res.status(400).send({ status: false, message: " pls provide password" })
-    // }
+    if (!isValid.isValidPassword(password)) {
+        return res.status(400).send({ status: false, message: " pls provide password" })
+    }
 
     if (address) {
       data.address = JSON.parse(address)
