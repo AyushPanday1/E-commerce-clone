@@ -2,6 +2,7 @@ const userModel = require("../models/userModel")
 const isValid = require("../utils/validator")
 const aws = require('../aws/awsConfig')
 const bcrypt = require('bcrypt')
+const { isValidObjectId } = require("mongoose")
 // const saltRounds = 10
 
 
@@ -172,5 +173,31 @@ const userLogin = async function (req, res) {
   }
 }
 
+/////////////////////////////////////////////GET USER API///////////////////////////////////////////////////
 
-module.exports = { createUser, userLogin }
+const getUser = async function (req, res) {
+    try {
+        let userIdInParam = req.params.userId
+        if (!isValidObjectId) {
+            return res.status(400).send({ status: false, message: "Invalid userId!" })
+        }
+        let foo = req.headers.authorization
+        let token = foo.split(" ")
+        let decodedToken = jwt.verify(token[1], "user-secret-token")
+        if (!decodedToken.userId == userIdInParam) {
+            return res.status(403).send({ status: false, Message: "Forbidden!!" })
+        }
+
+        let data = await userModel.findOne({ userId: userIdInParam })
+        if (!data) {
+            return res.status(404).send({ status: false, message: "User not found!" })
+        } else {
+            return res.status(200).send({ status: true, message:"User profile dtails", data: data })
+        }
+    } catch (error) {
+        return res.status(500).send({ status: false, message: error.message })
+    }
+}
+
+
+module.exports = { createUser, userLogin , getUser}
