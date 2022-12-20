@@ -53,6 +53,26 @@ const isValidStreet = function (street){
     return re.test(street)
 
 }
+const isValidTitle = function(title){
+    let titleRegex = /^[A-Za-z ][A-Za-z0-9!@#$%^&* ]*$/    //this regex will cointain everything (a,A,@,*$%) in title
+    return titleRegex.test(title)
+}
 
-module.exports = {isValidRequestBody,isValidName,validatePhone,isValidEmail,isValidPassword,validPin,isValidStreet,isValidFile}
+const isValid = function(value){
+    if(typeof value === "string" && value.trim().length === 0) return false;
+    return true 
+}
+
+const isValidPrice = (value) => {
+    const regEx =/^[1-9]\d{0,8}(?:\.\d{1,2})?$/
+    const result = regEx.test(value)
+    return result
+  }
+
+  const isValidInstallments = function(value){
+    let regex = /^[0-9]*$/;
+    return regex.test(value)
+  }
+
+module.exports = {isValidRequestBody,isValid,isValidInstallments, isValidPrice, isValidTitle,isValidName,validatePhone,isValidEmail,isValidPassword,validPin,isValidStreet,isValidFile}
 
