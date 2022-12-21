@@ -239,7 +239,7 @@ const updateProduct = async function (req, res) {
         }
 
         if (isFreeShipping) {
-            if (!(isFreeShipping==true || isFreeShipping==false)) {
+            if (!(isFreeShipping=="true" || isFreeShipping=="false")) {
                 return res.status(400).send({ status: false, message: "isFreeshipping can only be true or false." })}
 
           updateElements.isFreeShipping = isFreeShipping
@@ -265,7 +265,7 @@ const updateProduct = async function (req, res) {
 
           updateElements.installments = installments
         }
-
+        let files = req.files
         if (files && files.length > 0) {
             if (!isValidFile(files[0].originalname))  return res.status(400).send({ status: false, message: `Please put jpeg/png/jpg format only..` });
       
