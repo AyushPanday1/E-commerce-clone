@@ -184,4 +184,19 @@ const getProductsById = async function(req, res) {
         })
     }
 }
+
+
+const updateProduct = async function(req,res){
+try{
+
+        const productId = req.params.productId;
+
+        if(!productId) return res.status(400).send({status:false,message:"Please pass product id in params!!"})
+
+        if(!isValidObjectId(productId)) return res.status(400).send({status:false,message:"Product id is invalid!!"})
+
+    } catch(error){
+        return res.status(500).send({status:false,message:error.message})
+    }
+}
 module.exports = { createProduct , getProductsById }
