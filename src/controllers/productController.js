@@ -1,115 +1,187 @@
-const Usermodel = require('../models/userModel');
-const {isValidRequestBody,isValidName,validatePhone,isValidEmail,isValidPassword,validPin,isValidStreet,isValidFile} = require('../utils/validator');
+const ProductModel = require('../models/productModel')
+const aws = require("../aws/awsConfig")
+const { isValid, isValidPrice, isValidTitle, isValidFile, isValidInstallments } = require('../utils/validator');
+const productModel = require('../models/productModel');
+let {isValidObjectId} = require('mongoose')
 
-const updateUser = async function (req, res) {
+const createProduct = async (req, res) => {
     try {
-
-        let userId = req.params.userId;
-        if (!userId) return res.status(400).send({ status: false, message: "Please pass userid in params!!" })
-
-        if (!isValidRequestBody(data) || !(isValidFile(files))) return res.status(400).send({status: false, message: "Please provide data in the request body or files!!" });
-
-
         let data = req.body;
-        const { fname, lname, email, phone, password, address } = data;
-
-        /*TAKING ALL DATA IN A KEYWORD TO REDUCE DB CALLS_______________________________ */
-        const datainDB = await Usermodel.find();
-        for(let i=0;i<datainDB.length;i++){
-            if(datainDB[i]._id != userId) return res.status(404).send({ status: false, message: "User not found." });
+        let { title, description, price, currencyId, currencyFormat, isFreeShipping, productImage, style, availableSizes, installments, deletedAt, isDeleted } = data
+        if (Object.keys(data).length == 0) {
+            return res.status(400).send({ status: false, message: " body can not be empty" })
         }
 
-        /*STORING THE DATA TO BE UPDATED IN EMPTY OBJECT________________________________ */
-        let updateData = {};
-
-        if (fname) {
-            if (!isValidName(fname)) return res.status(400).send({ status: false, message: "Please pass valid first name!!" })
-
-            updateData.fname = fname;
+        if (!title || !isValid(title)) {
+            return res.status(400).send({ status: false, message: "title is mandatory" })
         }
-
-        if (lname) {
-            if (!isValidName(lname)) return res.status(400).send({ status: false, message: "Please pass valid last name!!" })
-
-            updateData.lname = lname;
+        if (!isValidTitle(title)) {
+            return res.status(400).send({ status: false, message: "invalid title" })
         }
-
-        if (email) {
-            if (!isValidEmail(email)) return res.status(400).send({ status: false, message: "Please pass valid email!!" })
-
-            for(let i=0;i<datainDB.length;i++){
-                if(datainDB[i].email == email) return res.status(400).send({ status: false, message: "Email already registered!!" });
-            }
-
-            updateData.email = email;
+        let uniqueTitle = await ProductModel.findOne({ title: title })
+        if (uniqueTitle) {
+            return res.status(400).send({ status: false, message: "this title already exists" })
         }
-
-        if (phone) {
-            if (!validatePhone(phone)) return res.status(400).send({ status: false, message: "Please pass valid phone!!" })
-
-            for(let i=0;i<datainDB.length;i++){
-                if(datainDB[i].phone == phone) return res.status(400).send({ status: false, message: "Phone number is already registered!!" });
-            }
-
-            updateData.phone = phone;
+        if (!description || !isValid(description)) {
+            return res.status(400).send({ status: false, message: "description is mandatory" })
         }
-
-        if (password) {
-            if (!isValidPassword(password)) return res.status(400).send({ status: false, message: "Please pass valid password!!" })
-
-            updateData.password = password;
+        if (!price || !isValid(price)) {
+            return res.status(400).send({ status: false, message: "price is mandatory" })
         }
+        if (!isValidPrice(price)) {
+            return res.status(400).send({ status: false, message: "invalid price" })
+        }
+        if (!currencyId)
+            return res.status(400).send({ status: false, message: "Currency Id is required" })
 
-        if (address) {
-            const { shipping, billing } = address;
+        if (currencyId != "INR")
+            return res.status(400).send({ status: false, msg: "Currency will be in INR" })
 
-            /*TAKING SHIPPING ADDRESS TO BE UPDATED____________________________________________ */
-            if (shipping) {
-                const { street, city, pincode } = shipping;
+        if (!currencyFormat) {
+            return res.status(400).send({ status: false, message: "CurrencyFormat is required" })
+        }
+        if (currencyFormat != "₹")
+            return res.status(400).send({ status: false, msg: "CurrencyFormat will be in ₹" })
 
-                if (street) {
-                    if (!isValidStreet(address.shipping.street)) { return res.status(400).send({ status: false, message: "Invalid shipping street!" }); }
-
-                    updateData["address.shipping.street"] = street}
-
-                if (city) {
-                    if (!isValidName(address.shipping.city)) {return res.status(400).send({ status: false, message: "Invalid shipping city!" });}
-                    
-                    updateData["address.shipping.city"] = city;}
-
-                if (pincode) {
-                    if (!validPin(address.shipping.pincode)) {return res.status(400).send({ status: false, message: "Invalid shipping pincode!" })}
-                  
-                    updateData["address.shipping.pincode"] = pincode;}
-            }
-
-            /*TAKING BILLING ADDRESSTO BE UPDATED___________________________________________ */
-            if (billing) {
-                const { street, city, pincode } = billing;
-
-                if (street) {
-                    if (!isValidStreet(address.billing.street)) {return res.status(400).send({ status: false, message: "Invalid billing street!" });}
-                  
-                    updateData["address.billing.street"] = street}
-
-                if (city) {
-                    if (!isValidName(address.billing.city)) {return res.status(400).send({ status: false, message: "Invalid billing city!" });}
-                 
-                    updateData["address.billing.city"] = city}
-
-                if (pincode) {
-                    if (!validPin(address.billing.pincode)) {return res.status(400).send({ status: false, message: "Invalid billing pincode!" })}
-                    
-                    updateData["address.billing.pincode"] = pincode}
+        if (isFreeShipping) {
+            if (!(isFreeShipping == "true" || isFreeShipping == "false")) {
+                return res.status(400).send({ status: false, msg: "isfreeshiping either true or false" })
             }
         }
 
-        const newUpdatedData = await Usermodel.findOneAndUpdate({_id:userId} , updateData , {new:true})
 
-        return res.status(200).send({status: true,message: "user profile successfully updated",data: newUpdatedData});
+        ////////////////////////////AWS FILE UPLOADING/////////////////////////////////////////////////////
+        let files = req.files
+        if (files && files.length > 0) {
+            if (!isValidFile(files[0].originalname)) {
+                return res.status(400).send({ status: false, message: " formats that are accepted jpeg/jpg/png only." })
+            }
+
+            let uploadedFileURL = await aws.uploadFile(files[0]);
+            data.productImage = uploadedFileURL     //assigining the file URL in request body
+        } else {
+            return res.status(400).send({ status: false, message: "product image is required" })
+        }
+
+        if (!isValid(style)) {
+            return res.status(400).send({ status: false, message: "style can not be empty" })
+        }
+        if (availableSizes) {
+            if (availableSizes != "S" && availableSizes != "XS" && availableSizes != "M" && availableSizes != "X" && availableSizes != "L" && availableSizes != "XXL" && availableSizes != "XL") {
+                return res.status(400).send({ status: false, message: "Available sizes are XS,S,M,L,X,XXL,XL, please enter available size" })
+            }
+        }
+
+        if (!isValid(installments) || !isValidInstallments(installments)) {
+            return res.status(400).send({ status: false, message: "installments must be in numbers" })
+        }
 
 
-    } catch (error) {
+        //////////////////////////////CREATING PRODUCT////////////////////////////////////////////////////////
+        let productCreate = await productModel.create(data)
+        return res.status(201).send({ status: true, message: "success", data: productCreate })
+    }
+    catch (error) {
         return res.status(500).send({ status: false, message: error.message })
     }
 }
+
+
+
+
+const getProduct = async function (req, res) {
+    try {
+        let { size, name, priceGreaterThan, priceLessThan, priceSort } = req.query;
+
+        const filter = { isDeleted: false };
+        if (size) {
+            filter["availableSizes"] = size
+        }
+
+        if (name) {
+            if (!isValidName(name)) return res.status(400).send({ stastus: false, message: "Invalid naming format!" });
+
+            filter["title"] = name
+        }
+
+        if (priceGreaterThan) {
+            filter["price"] = { $gt: priceGreaterThan }
+        }
+
+        if (priceLessThan) {
+            filter["price"] = { $lt: priceLessThan }
+        }
+
+        if (priceGreaterThan && priceLessThan) {
+
+            if (priceGreaterThan == priceLessThan) return res.status(400).send({ status: false, message: "priceGreaterThan and priceLessThan can't be equal" });
+
+            filter["price"] = { $gt: priceGreaterThan, $lt: priceLessThan }
+        }
+
+        if (priceSort) {
+            if (priceSort == 1) {
+                let find = await productModel.find(filter).sort({ price: 1 });
+                if (!find) {
+                    return res.status(400).send({
+                        status: false,
+                        message: "No data found that matches your search",
+                    });
+                }
+                return res.status(200).send({ status: true, message: "Success", data: find });
+            }
+            if (priceSort == -1) {
+                let find2 = await productModel.find(filter).sort({ price: -1 });
+                if (!find2) {
+                    return res.status(404).send({
+                        status: false,
+                        message: "No data found that matches your search1",
+                    });
+                }
+                return res.status(200).send({ status: true, message: "Success", data: find2 });
+            }
+        }
+
+        const finaldata = await productModel.find(filter);
+
+        if (!finaldata || finaldata.length == 0) {
+            return res.status(404).send({
+                status: false,
+                message: "No data found that matches your search 2"
+            })
+        }
+
+
+        return res.status(200).send({ status: true, message: "Success", data: finaldata });
+    } catch (error) {
+        res.status(500).send({ message: error.message });
+    }
+};
+
+
+//fetch products by Id.
+const getProductsById = async function(req, res) {
+    try {
+        const productId = req.params.productId
+
+        //validation starts.
+        if (!isValidObjectId(productId)) {
+            return res.status(400).send({ status: false, message: `${productId} is not a valid product id` })
+        }
+        //validation ends.
+
+        const product = await productModel.findOne({ _id: productId, isDeleted: false });
+
+        if (!product) {
+            return res.status(404).send({ status: false, message: `product does not exists` })
+        }
+
+        return res.status(200).send({ status: true, message: 'Product found successfully', data: product })
+    } catch (err) {
+        return res.status(500).send({
+            status: false,
+            message: err.message
+        })
+    }
+}
+module.exports = { createProduct , getProductsById }
