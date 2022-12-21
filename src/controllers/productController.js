@@ -1,9 +1,11 @@
 const ProductModel = require('../models/productModel')
 const aws = require("../aws/awsConfig")
-const { isValid, isValidPrice, isValidTitle, isValidFile, isValidInstallments } = require('../utils/validator');
+const { isValid, isValidSize ,isValidName,isValidPrice, isValidTitle, isValidFile, isValidInstallments } = require('../utils/validator');
 const productModel = require('../models/productModel');
-let {isValidObjectId} = require('mongoose')
+let { isValidObjectId } = require('mongoose')
 
+
+/*________________________________________________ FIRST API ____________________________________________________________ */
 const createProduct = async (req, res) => {
     try {
         let data = req.body;
@@ -88,7 +90,7 @@ const createProduct = async (req, res) => {
 
 
 
-
+/*________________________________________________ SECOND API _____________________________________________________ */
 const getProduct = async function (req, res) {
     try {
         let { size, name, priceGreaterThan, priceLessThan, priceSort } = req.query;
@@ -159,8 +161,8 @@ const getProduct = async function (req, res) {
 };
 
 
-//fetch products by Id.
-const getProductsById = async function(req, res) {
+/*________________________________________________ THIRD API ____________________________________________________________ */
+const getProductsById = async function (req, res) {
     try {
         const productId = req.params.productId
 
@@ -186,17 +188,126 @@ const getProductsById = async function(req, res) {
 }
 
 
-const updateProduct = async function(req,res){
-try{
+
+/*________________________________________________ FOURTH API _________________________________________________________ */
+const updateProduct = async function (req, res) {
+    try {
 
         const productId = req.params.productId;
 
-        if(!productId) return res.status(400).send({status:false,message:"Please pass product id in params!!"})
+        const data = req.body;
 
-        if(!isValidObjectId(productId)) return res.status(400).send({status:false,message:"Product id is invalid!!"})
+        if (!productId) return res.status(400).send({ status: false, message: "Please pass product id in params!!" })
 
-    } catch(error){
+        if (Object.keys(data).length == 0) return res.status(400).send({ status: false, message: "Please provide info to be updated!!" })
+
+        if (!isValidObjectId(productId)) return res.status(400).send({ status: false, message: "Product id is invalid!!" })
+
+        const checkInDb = await ProductModel.findById(productId)
+
+        if (!checkInDb) return res.status(404).send({ status: false, message: "Data not found in db." })
+
+        if (checkInDb.isDeleted == true) return res.status(400).send({ status: false, message: "Product has been deleted." })
+
+        const { title, description, price, isFreeShipping, style, availableSizes, installments } = data;
+
+        const updateElements = {};
+
+        if (title) {
+            if (!isValidTitle(title)) {
+                return res.status(400).send({ status: false, message: "Title to be updated is invalid." })}
+
+            const checkTitle = await ProductModel.findOne({title:title})
+           
+            if(checkTitle) return res.status(400).send({status:false,message:"Title is already registerd."})
+       
+            updateElements.title = title
+        }
+
+        if (description) {
+            if (!isValid(description)) {
+                return res.status(400).send({ status: false, message: "description to be updated is invalid." })}
+
+          updateElements.description = description
+        }
+
+        if (price) {
+            if (!isValidPrice(price)) {
+                return res.status(400).send({ status: false, message: "price to be updated is invalid." })}
+
+          updateElements.price = price
+        }
+
+        if (isFreeShipping) {
+            if (!(isFreeShipping==true || isFreeShipping==false)) {
+                return res.status(400).send({ status: false, message: "isFreeshipping can only be true or false." })}
+
+          updateElements.isFreeShipping = isFreeShipping
+        }
+
+        if (style) {
+            if (!isValidName(style)) {
+                return res.status(400).send({ status: false, message: "style to be updated is invalid." })}
+
+          updateElements.style = style
+        }
+
+        if (availableSizes) {
+            if (!isValidSize(availableSizes)) {
+                return res.status(400).send({ status: false, message: "availableSizes can only be [S, XS, M, X, L, XXL, XL] "})}
+
+          updateElements.availableSizes = availableSizes
+        }
+      
+        if (installments) {
+            if (!isValidInstallments(installments)) {
+                return res.status(400).send({ status: false, message: "installments to be updated is invalid." })}
+
+          updateElements.installments = installments
+        }
+
+        if (files && files.length > 0) {
+            if (!isValidFile(files[0].originalname))  return res.status(400).send({ status: false, message: `Please put jpeg/png/jpg format only..` });
+      
+            let uploadedFileURL = await aws.uploadFile(files[0]);
+      
+          updateElements.productImage  = uploadedFileURL} 
+          
+        else if (Object.keys(data).includes("productImage")) {
+            return res.status(400).send({ status: false, message: "please put the productImage" })}
+      
+        let updateData = await ProductModel.findOneAndUpdate({_id:productId} , updateElements, {new:true})
+
+        return res.status(200).send({status:false,message:"Data updated successfully." , data:updateData})
+
+    } catch (error) {
+        return res.status(500).send({ status: false, message: error.message })
+    }
+}
+
+
+const deleteProduct = async function(req,res){
+ try{
+
+     let productId = req.params.productId;
+
+     if(!productId) return res.status(400).send({status:false,message:"Provide product id in params."})
+
+     if(!isValidObjectId(productId)) return res.status(400).send({status:false , message:"Passed productid is invalid."});
+
+     let checkInDB = await ProductModel.findById(productId);
+
+     if(!checkInDB) return res.status(404).send({status:false,message:"No data found."});
+
+     if(checkInDB.isDeleted==true) return res.status(400).send({status:false,message:"Product is already deleted."});
+
+     const deleted = await ProductModel.findByIdAndDelete(productId);
+
+     return res.status(200).send({status:true,message:"Successfully deleted." , data:deleted})
+
+    }catch(error){
         return res.status(500).send({status:false,message:error.message})
     }
 }
-module.exports = { createProduct , getProductsById }
+
+module.exports = { createProduct, getProductsById , updateProduct , deleteProduct}

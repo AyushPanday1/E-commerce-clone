@@ -39,6 +39,10 @@ const isValidFile = (img) => {
     return regex
 }
 
+/*______________________SIZE VALIDATION_________________________________ */
+const isValidSize = function (size) {
+    return ["S", "XS", "M", "X", "L", "XXL", "XL"].indexOf(size) !== -1;
+  };
 
 /*_______________________VALIDATION FOR PINCODE________________________ */
 const validPin = function(pincode){
@@ -74,5 +78,5 @@ const isValidPrice = (value) => {
     return regex.test(value)
   }
 
-module.exports = {isValidRequestBody,isValid,isValidInstallments, isValidPrice, isValidTitle,isValidName,validatePhone,isValidEmail,isValidPassword,validPin,isValidStreet,isValidFile}
+module.exports = {isValidRequestBody,isValid,isValidSize,isValidInstallments, isValidPrice, isValidTitle,isValidName,validatePhone,isValidEmail,isValidPassword,validPin,isValidStreet,isValidFile}
 
