@@ -311,4 +311,4 @@ const getUser = async function (req, res) {
 
 
 
-module.exports = { createUser, userLogin , getUser}
+module.exports = { createUser, userLogin , getUser, updateUser}

@@ -16,6 +16,7 @@ router.put('/user/:userId/profile' , userController.updateUser)
 //////////////////////////////////////////PRODUCT API///////////////////////////////////////////////////////////
 
 router.post('/products', productController.createProduct)
+router.get('/products/:productId', productController.getProductsById)
 
 
 

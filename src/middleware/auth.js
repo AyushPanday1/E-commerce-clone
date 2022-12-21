@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const { isValidObjectId } = require('mongoose');
 const userModel = require('../models/userModel');
 
-const authentication = async function(req,res){
+const authentication = async function(req,res,next){
     try{
 
         let token = req.headers['x-auth-key'];
@@ -22,7 +22,7 @@ const authentication = async function(req,res){
 }
 
 
-const authorisation = async function(req,res){
+const authorisation = async function(req,res,next){
     try{
 
        let id = req.params.id;

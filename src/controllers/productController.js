@@ -2,6 +2,7 @@ const ProductModel = require('../models/productModel')
 const aws = require("../aws/awsConfig")
 const { isValid, isValidPrice, isValidTitle, isValidFile, isValidInstallments } = require('../utils/validator');
 const productModel = require('../models/productModel');
+let {isValidObjectId} = require('mongoose')
 
 const createProduct = async (req, res) => {
     try {
@@ -84,9 +85,6 @@ const createProduct = async (req, res) => {
         return res.status(500).send({ status: false, message: error.message })
     }
 }
-module.exports = { createProduct }
-
-
 
 
 
@@ -159,3 +157,31 @@ const getProduct = async function (req, res) {
         res.status(500).send({ message: error.message });
     }
 };
+
+
+//fetch products by Id.
+const getProductsById = async function(req, res) {
+    try {
+        const productId = req.params.productId
+
+        //validation starts.
+        if (!isValidObjectId(productId)) {
+            return res.status(400).send({ status: false, message: `${productId} is not a valid product id` })
+        }
+        //validation ends.
+
+        const product = await productModel.findOne({ _id: productId, isDeleted: false });
+
+        if (!product) {
+            return res.status(404).send({ status: false, message: `product does not exists` })
+        }
+
+        return res.status(200).send({ status: true, message: 'Product found successfully', data: product })
+    } catch (err) {
+        return res.status(500).send({
+            status: false,
+            message: err.message
+        })
+    }
+}
+module.exports = { createProduct , getProductsById }
