@@ -189,10 +189,10 @@ const updateUser = async function (req, res) {
       const { fname, lname, email, phone, password, address } = data;
 
       /*TAKING ALL DATA IN A KEYWORD TO REDUCE DB CALLS_______________________________ */
-      const datainDB = await Usermodel.find();
-      for(let i=0;i<datainDB.length;i++){
-          if(datainDB[i]._id != userId) return res.status(404).send({ status: false, message: "User not found." });
-      }
+      const datainDB = await userModel.findById(userId);
+      
+      if(!datainDB) return res.status(404).send({ status: false, message: "User not found." });
+      
 
       /*STORING THE DATA TO BE UPDATED IN EMPTY OBJECT________________________________ */
       let updateData = {};
@@ -200,7 +200,7 @@ const updateUser = async function (req, res) {
       if (fname) {
           if (!isValidName(fname)) return res.status(400).send({ status: false, message: "Please pass valid first name!!" })
 
-          updateData.fname = fname;
+          updateData.fname = fname; 
       }
 
       if (lname) {
@@ -212,9 +212,9 @@ const updateUser = async function (req, res) {
       if (email) {
           if (!isValidEmail(email)) return res.status(400).send({ status: false, message: "Please pass valid email!!" })
 
-          for(let i=0;i<datainDB.length;i++){
-              if(datainDB[i].email == email) return res.status(400).send({ status: false, message: "Email already registered!!" });
-          }
+          const checkEmail = await userModel.find({email:email})
+
+          if(checkEmail) return res.status(400).send({ status: false, message: "Email already registered!!" })
 
           updateData.email = email;
       }
@@ -222,17 +222,22 @@ const updateUser = async function (req, res) {
       if (phone) {
           if (!validatePhone(phone)) return res.status(400).send({ status: false, message: "Please pass valid phone!!" })
 
-          for(let i=0;i<datainDB.length;i++){
-              if(datainDB[i].phone == phone) return res.status(400).send({ status: false, message: "Phone number is already registered!!" });
-          }
+          const checkPhone = await userModel.find({phone:phone})
+
+          if(checkPhone) return res.status(400).send({ status: false, message: "Phone number is  already registered!!" })
 
           updateData.phone = phone;
       }
 
       if (password) {
-          if (!isValidPassword(password)) return res.status(400).send({ status: false, message: "Please pass valid password!!" })
+        if (!isValidPassword(password)) return res.status(400).send({ status: false, message: "Please pass valid password!!" })
 
-          updateData.password = password;
+        // data.password = await  bcrypt.hashSync(data.password,10) 
+        // let hashedPassword = data.password
+
+        let hashedPassword = await bcrypt.hashSync(password,10)
+
+        updateData.password = hashedPassword;
       }
 
       if (address) {
@@ -279,7 +284,7 @@ const updateUser = async function (req, res) {
           }
       }
 
-      const newUpdatedData = await Usermodel.findOneAndUpdate({_id:userId} , updateData , {new:true})
+      const newUpdatedData = await userModel.findOneAndUpdate({_id:userId} , updateData , {new:true})
 
       return res.status(200).send({status: true,message: "user profile successfully updated",data: newUpdatedData});
 
