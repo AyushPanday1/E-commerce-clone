@@ -2,6 +2,7 @@ const userModel = require("../models/userModel")
 // const isValid = require("../utils/validator")
 const aws = require('../aws/awsConfig')
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 const { isValidObjectId } = require("mongoose")
 // const saltRounds = 10
 const {isValidRequestBody,isEmpty, isValidName,validatePhone,isValidEmail,isValidPassword,validPin,isValidStreet,isValidFile} = require('../utils/validator');
@@ -67,13 +68,25 @@ const createUser = async function (req, res) {
     let hashedPassword = bcrypt.hashSync(password,10)  
       data.password = hashedPassword      // STORING THE PASSWORD IN DB
       
-      if(!address || !isEmpty(address)){
-        return res.status(400).send({status: false , message:"address is mandatory"})
+      // if(!address|| !isEmpty(address) ){   
+      //   return res.status(400).send({status: false , message:"address is mandatory"})
+      // }
+      
+      if(address){
+        const {shipping, billing} = address;    //(address.shipping= shipping)
+      if(shipping){
+        const {street,city,pincode} = shipping    //(address.shipping.street = street)
+        if(street){
+          if (!isValidStreet(address.shipping.street)) { return res.status(400).send({ status: false, message: "Invalid shipping street!" }); }
+
+
+        }
       }
-      data.address = JSON.parse(address)
-      if(!address.shipping.street || !isEmpty(address.shipping.street)){
-        return res.status(400).send({status: false , message:"street is mandatory"})
-      }
+    }
+      // if(!address.shipping.street){
+      //   return res.status(400).send({status: false , message:"street is mandatory"})
+      // }
+
     // if (address) {
     //   data.address = JSON.parse(address)
     //   if (!data.address.shipping.street)
@@ -144,7 +157,7 @@ const userLogin = async function (req, res) {
     if (!isValidPassword(password)) {
       return res.status(400).send({ status: false, message: "password must be from length 8-15 characters " })
     }
-    let findUser = await userModel.findOne({ email: email, password: password })
+    let findUser = await userModel.findOne({ email: email })
     if (!findUser) {
       return res.status(404).send({ status: false, message: "email or password is not correct" })
     }
@@ -164,7 +177,7 @@ const userLogin = async function (req, res) {
         userId: findUser.id,
         token: createToken
       }
-      return res.status(201).send({ status: true, message: "user login successfully", data: finalResponse })
+      return res.status(200).send({ status: true, message: "user login successfully", data: finalResponse })
     })
   }
   catch (error) {
