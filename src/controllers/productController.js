@@ -1,6 +1,6 @@
 const ProductModel = require('../models/productModel')
 const aws = require("../aws/awsConfig")
-const { isValid, isValidSize ,isValidName,isValidPrice, isValidTitle, isValidFile, isValidInstallments } = require('../utils/validator');
+const { isEmpty , isValidSize ,isValidName,isValidPrice, isValidTitle, isValidFile, isValidInstallments } = require('../utils/validator');
 const productModel = require('../models/productModel');
 let { isValidObjectId } = require('mongoose')
 
@@ -14,7 +14,7 @@ const createProduct = async (req, res) => {
             return res.status(400).send({ status: false, message: " body can not be empty" })
         }
 
-        if (!title || !isValid(title)) {
+        if (!title || !isEmpty(title)) {
             return res.status(400).send({ status: false, message: "title is mandatory" })
         }
         if (!isValidTitle(title)) {
@@ -24,10 +24,10 @@ const createProduct = async (req, res) => {
         if (uniqueTitle) {
             return res.status(400).send({ status: false, message: "this title already exists" })
         }
-        if (!description || !isValid(description)) {
+        if (!description || !isEmpty(description)) {
             return res.status(400).send({ status: false, message: "description is mandatory" })
         }
-        if (!price || !isValid(price)) {
+        if (!price || !isEmpty(price)) {
             return res.status(400).send({ status: false, message: "price is mandatory" })
         }
         if (!isValidPrice(price)) {
@@ -45,12 +45,26 @@ const createProduct = async (req, res) => {
         if (currencyFormat != "₹")
             return res.status(400).send({ status: false, msg: "CurrencyFormat will be in ₹" })
 
-        if (isFreeShipping) {
+
+            // if(isFreeShipping.trim() == 0){
+            //     console.log(isFreeShipping)
+            //      return res.status(400).send({ status: false, message: "isfreeshiping kljkjkjk mandatory" })
+                
+            //   }
+
+
+        if (isFreeShipping !=undefined) {
+            // if(isFreeShipping.trim().length == 0) return res.send({msg:"please provide the value"})
+            // if(isFreeShipping == null) {
+            //     return res.status(400).send({ status: false, message: "isfreeshiping is mandatory" })
+
+            // }
             if (!(isFreeShipping == "true" || isFreeShipping == "false")) {
                 return res.status(400).send({ status: false, msg: "isfreeshiping either true or false" })
             }
         }
-
+        // console.log(isFreeShipping.length)
+         
 
         ////////////////////////////AWS FILE UPLOADING/////////////////////////////////////////////////////
         let files = req.files
@@ -65,7 +79,7 @@ const createProduct = async (req, res) => {
             return res.status(400).send({ status: false, message: "product image is required" })
         }
 
-        if (!isValid(style)) {
+        if (!isEmpty(style)) {
             return res.status(400).send({ status: false, message: "style can not be empty" })
         }
         if (availableSizes) {
@@ -74,7 +88,7 @@ const createProduct = async (req, res) => {
             }
         }
 
-        if (!isValid(installments) || !isValidInstallments(installments)) {
+        if (!isEmpty(installments) || !isValidInstallments(installments)) {
             return res.status(400).send({ status: false, message: "installments must be in numbers" })
         }
 
@@ -225,7 +239,7 @@ const updateProduct = async function (req, res) {
         }
 
         if (description) {
-            if (!isValid(description)) {
+            if (!isEmpty(description)) {
                 return res.status(400).send({ status: false, message: "description to be updated is invalid." })}
 
           updateElements.description = description

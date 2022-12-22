@@ -62,7 +62,7 @@ const isValidTitle = function(title){
     return titleRegex.test(title)
 }
 
-const isValid = function(value){
+const isEmpty= function(value){
     if(typeof value === "string" && value.trim().length === 0) return false;
     return true 
 }
@@ -78,5 +78,5 @@ const isValidPrice = (value) => {
     return regex.test(value)
   }
 
-module.exports = {isValidRequestBody,isValid,isValidSize,isValidInstallments, isValidPrice, isValidTitle,isValidName,validatePhone,isValidEmail,isValidPassword,validPin,isValidStreet,isValidFile}
+module.exports = {isValidRequestBody,isEmpty,isValidSize,isValidInstallments, isValidPrice, isValidTitle,isValidName,validatePhone,isValidEmail,isValidPassword,validPin,isValidStreet,isValidFile}
 
