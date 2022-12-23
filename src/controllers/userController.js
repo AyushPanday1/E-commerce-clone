@@ -66,58 +66,59 @@ const createUser = async function (req, res) {
     }
     // THIS TECHNIQUE WILL AUTOMATICALLY GENERATE THE SALT & HASH
     let hashedPassword = bcrypt.hashSync(password, 10)
-    data.password = hashedPassword      // STORING THE PASSWORD IN DB
-
-    // if(!address|| !isEmpty(address) ){   
-    //   return res.status(400).send({status: false , message:"address is mandatory"})
-    // }
-
-    if (address) {
-      const { shipping, billing } = address;    //(address.shipping= shipping)
-      if (shipping) {
-        const { street, city, pincode } = shipping    //(address.shipping.street = street)
-        if (street) {
-          if (!isValidStreet(address.shipping.street)) { return res.status(400).send({ status: false, message: "Invalid shipping street!" }); }
+    data.password = hashedPassword     
 
 
-        }
-      }
+    /*VALIDATION FOR SHIPPING ADDRESS____________________________________________ */
+    if(!address.shipping.street|| !isEmpty(address.shipping.street) ){   
+      return res.status(400).send({status: false , message:"Shipping street is mandatory or empty."})
     }
-    // if(!address.shipping.street){
-    //   return res.status(400).send({status: false , message:"street is mandatory"})
-    // }
 
-    // if (address) {
-    //   data.address = JSON.parse(address)
-    //   if (!data.address.shipping.street)
-    //     return res.status(400).send({ status: false, message: "Shipping Street is required!" });
+    if(!isValidStreet(address.shipping.street))
+     return res.status(400).send({status:false,message:"Street of shipping address is invalid."})
+
+    /*City Validation________________________________________ */
+    if(!address.shipping.city|| !isEmpty(address.shipping.city) ){   
+      return res.status(400).send({status: false , message:"Shipping city is mandatory or empty."})
+    }
+
+    if(!isValidName(address.shipping.street))
+     return res.status(400).send({status:false,message:"city of shipping address is invalid."})
+
+    /*Pincode validation_____________________________________ */
+     if(!address.shipping.pincode|| !isEmpty(address.shipping.pincode) ){   
+      return res.status(400).send({status: false , message:"Shipping pincode is mandatory or empty."})
+    }
+
+    if(!validPin(address.shipping.pincode))
+     return res.status(400).send({status:false,message:"pincode of shipping address is invalid."})
 
 
-    //   if (!data.address.shipping.city)
-    //     return res.status(400).send({ status: false, message: "Shipping City is required!" });
+     /*BILLING ADDRESS VALIDATION________________________________________________________________ */
+     if(!address.billing.street|| !isEmpty(address.billing.street) ){   
+      return res.status(400).send({status: false , message:"Billing street is mandatory or empty."})
+    }
 
+    if(!isValidStreet(address.billing.street))
+     return res.status(400).send({status:false,message:"Street of billing address is invalid."})
 
-    //   if (!data.address.shipping.pincode) {
-    //     return res.status(400).send({ status: false, message: "Shipping Pincode is required!" });
-    //   }
-    //   if (!validPin(data.address.shipping.pincode)) {
-    //     return res.status(400).send({ status: false, msg: " invalid  pincode " })
-    //   }
+    /*City Validation____________________________________________- */
+     if(!address.billing.city || !isEmpty(address.billing.city ) ){   
+      return res.status(400).send({status: false , message:"Billing city is mandatory or empty."})
+    }
 
-    //   if (!data.address.billing.street)
-    //     return res.status(400).send({ status: false, message: "Billing Street is required!" });
+    if(!isValidName(address.billing.city ))
+     return res.status(400).send({status:false,message:"city of billing address is invalid."})
 
-    //   if (!data.address.billing.city)
-    //     return res.status(400).send({ status: false, message: "Billing City is required!" });
+    /*Pincode validation___________________________________________ */
+    if(!address.billing.pincode|| !isEmpty(address.billing.pincode) ){   
+      return res.status(400).send({status: false , message:"Billing pincode is mandatory or empty."})
+    }
 
-    //   if (!data.address.billing.pincode) {
-    //     return res.status(400).send({ status: false, message: "Billing Pincode is required!" });
-    //   }
-    //   if (!validPin(data.address.billing.pincode)) {
-    //     return res.status(400).send({ status: false, msg: " invalid  pincode " })
-    //   }
-    // }
+    if(!validPin(address.billing.pincode))
+     return res.status(400).send({status:false,message:"pincode of billing address is invalid."})
 
+     
     let files = req.files; //aws
     if (files && files.length > 0) {
       if (!isValidFile(files[0].originalname))
