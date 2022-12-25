@@ -5,6 +5,8 @@ const router = express.Router()
 const userController=require('../controllers/userController')
 const productController = require('../controllers/productController')
 
+const {user} = require('../controllers/test.js')
+
 router.get('/trial-api' , function(req,res){
    res.send("Yes it is working.")
 })

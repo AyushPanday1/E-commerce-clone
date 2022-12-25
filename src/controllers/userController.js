@@ -14,6 +14,7 @@ const createUser = async function (req, res) {
 
     const { fname, lname, email, phone, password, address } = data;
 
+  
     if (!isValidRequestBody(data)) {
       return res.status(400).send({ status: false, message: "Please provide data in the request body!", })
     }
@@ -37,9 +38,10 @@ const createUser = async function (req, res) {
     }
     if (!isValidEmail(email)) {
       return res.status(400).send({ status: false, message: "Invalid email id" })
-
     }
-    // ------------------------------CHECKING THE DUPLICACY OF EMAIL & PHONE NUMBER------------------------------
+
+    //------------------------------CHECKING THE DUPLICACY OF EMAIL & PHONE NUMBER------------------------------
+
     let unique = await userModel.findOne({ $or: [{ email: email }, { phone: phone }] });
     if (unique) {
       if (unique.email == email) {
@@ -70,55 +72,55 @@ const createUser = async function (req, res) {
 
 
     /*VALIDATION FOR SHIPPING ADDRESS____________________________________________ */
-    if(!address.shipping.street|| !isEmpty(address.shipping.street) ){   
-      return res.status(400).send({status: false , message:"Shipping street is mandatory or empty."})
-    }
+
+    if(!address) return res.status(400).send({status:false,msg:'enter the address'})
+
+   
+    //Validation of shipping address add isvalid function_________________________
+    // try {
+    //   address = JSON.parse(address);
+    // } 
+    // catch (err) {
+
+    //  return  res.status(400).send({ status: false, message: "Address not in object format or its values are invalid format!!" })
+    // }
+    address = JSON.parse(address)
+   
 
     if(!isValidStreet(address.shipping.street))
      return res.status(400).send({status:false,message:"Street of shipping address is invalid."})
 
     /*City Validation________________________________________ */
-    if(!address.shipping.city|| !isEmpty(address.shipping.city) ){   
-      return res.status(400).send({status: false , message:"Shipping city is mandatory or empty."})
-    }
+    
 
     if(!isValidName(address.shipping.street))
      return res.status(400).send({status:false,message:"city of shipping address is invalid."})
 
     /*Pincode validation_____________________________________ */
-     if(!address.shipping.pincode|| !isEmpty(address.shipping.pincode) ){   
-      return res.status(400).send({status: false , message:"Shipping pincode is mandatory or empty."})
-    }
-
+    
     if(!validPin(address.shipping.pincode))
      return res.status(400).send({status:false,message:"pincode of shipping address is invalid."})
-
-
+    
+  
+    
      /*BILLING ADDRESS VALIDATION________________________________________________________________ */
-     if(!address.billing.street|| !isEmpty(address.billing.street) ){   
-      return res.status(400).send({status: false , message:"Billing street is mandatory or empty."})
-    }
+     
 
     if(!isValidStreet(address.billing.street))
      return res.status(400).send({status:false,message:"Street of billing address is invalid."})
 
     /*City Validation____________________________________________- */
-     if(!address.billing.city || !isEmpty(address.billing.city ) ){   
-      return res.status(400).send({status: false , message:"Billing city is mandatory or empty."})
-    }
+     
 
     if(!isValidName(address.billing.city ))
      return res.status(400).send({status:false,message:"city of billing address is invalid."})
 
     /*Pincode validation___________________________________________ */
-    if(!address.billing.pincode|| !isEmpty(address.billing.pincode) ){   
-      return res.status(400).send({status: false , message:"Billing pincode is mandatory or empty."})
-    }
-
+    
     if(!validPin(address.billing.pincode))
      return res.status(400).send({status:false,message:"pincode of billing address is invalid."})
+    
 
-     
     let files = req.files; //aws
     if (files && files.length > 0) {
       if (!isValidFile(files[0].originalname))
@@ -132,15 +134,14 @@ const createUser = async function (req, res) {
 
     const userDetails = await userModel.create(data);
     return res.status(201).send({ status: true, message: "user successfully created", data: userDetails })
-  }
-
-  catch (error) {
+  
+   } catch (error) {
     return res.status(500).send({ message: error.message });
   }
 }
 
 
-//////////////////////////////////////////USER LOGIN/////////////////////////////////////////////////////
+//___USER LOGIN________________________________________________________________________*/
 
 const userLogin = async function (req, res) {
   try {
@@ -185,9 +186,6 @@ const userLogin = async function (req, res) {
     res.status(500).send({ status: false, message: error.message })
   }
 }
-
-/////////////////////////////////////////////GET USER API///////////////////////////////////////////////////
-
 
 
 const updateUser = async function (req, res) {
