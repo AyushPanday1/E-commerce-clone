@@ -1,12 +1,11 @@
 const userModel = require("../models/userModel")
-// const isValid = require("../utils/validator")
 const aws = require('../aws/awsConfig')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const { isValidObjectId } = require("mongoose")
-// const saltRounds = 10
+
 const { isValidRequestBody, isEmpty, isValidName, validatePhone, isValidEmail, isValidPassword, validPin, isValidStreet, isValidFile } = require('../utils/validator');
-const { find } = require("../models/userModel")
+
 
 
 const createUser = async function (req, res) {
