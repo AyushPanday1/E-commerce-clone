@@ -79,10 +79,13 @@ const isValidPrice = (value) => {
     let regex = /^[0-9]*$/;
     return regex.test(value)
   }
-
+  const isValidNumbers = function (value){
+    let user = /^[0-9]+$/.test(value)
+    return user
+  }
   const isValidId = function(value){
     return mongoose.Types.ObjectId.isValid(value)
   }
 
-module.exports = {isValidId, isValidRequestBody,isEmpty,isValidSize,isValidInstallments, isValidPrice, isValidTitle,isValidName,validatePhone,isValidEmail,isValidPassword,validPin,isValidStreet,isValidFile}
+module.exports = {isValidId,isValidNumbers, isValidRequestBody,isEmpty,isValidSize,isValidInstallments, isValidPrice, isValidTitle,isValidName,validatePhone,isValidEmail,isValidPassword,validPin,isValidStreet,isValidFile}
 

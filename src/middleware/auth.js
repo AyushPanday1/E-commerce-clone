@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { isValidObjectId } = require('mongoose');
+const {isValidId}= require('../utils/validator')
 const userModel = require('../models/userModel');
 
 const authentication = async function(req,res,next){
@@ -29,11 +29,11 @@ const authentication = async function(req,res,next){
 const authorisation = async function(req,res,next){
     try{
 
-       let id = req.params.id;
+       let userId = req.params.userId;
 
-       if(!isValidObjectId(id)) return res.status(400).send({status:false,message:"ID is invalid."});
+       if(!isValidId(userId)) return res.status(400).send({status:false,message:"ID is invalid."});
 
-       let checkInDB = await userModel.findById(id);
+       let checkInDB = await userModel.findById(userId);
 
        if(!checkInDB) return res.status(404).send({status:false,message:"No related user id found In DB.(authorisation error)"})
 

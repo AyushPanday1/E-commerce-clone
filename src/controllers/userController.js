@@ -202,11 +202,9 @@ const updateUser = async function (req, res) {
     let userId = req.params.userId;
     if (!userId) return res.status(400).send({ status: false, message: "Please pass userid in params!!" })
 
-    if (!isValidRequestBody(data) || !(isValidFile(files))) return res.status(400).send({ status: false, message: "Please provide data in the request body or files!!" });
-
-
     let data = req.body;
     const { fname, lname, email, phone, password, address } = data;
+    if (!isValidRequestBody(data)) return res.status(400).send({ status: false, message: "Please provide data in the request body or files!!" });
 
     /*TAKING ALL DATA IN A KEYWORD TO REDUCE DB CALLS_______________________________ */
     const datainDB = await userModel.findById(userId);
@@ -215,7 +213,7 @@ const updateUser = async function (req, res) {
 
 
     /*STORING THE DATA TO BE UPDATED IN EMPTY OBJECT________________________________ */
-    let updateData = {};
+    const updateData = {};
 
     if (fname) {
       if (!isValidName(fname)) return res.status(400).send({ status: false, message: "Please pass valid first name!!" })
@@ -232,7 +230,7 @@ const updateUser = async function (req, res) {
     if (email) {
       if (!isValidEmail(email)) return res.status(400).send({ status: false, message: "Please pass valid email!!" })
 
-      const checkEmail = await userModel.find({ email: email })
+      const checkEmail = await userModel.findOne({ email: email })
 
       if (checkEmail) return res.status(400).send({ status: false, message: "Email already registered!!" })
 
@@ -242,7 +240,7 @@ const updateUser = async function (req, res) {
     if (phone) {
       if (!validatePhone(phone)) return res.status(400).send({ status: false, message: "Please pass valid phone!!" })
 
-      const checkPhone = await userModel.find({ phone: phone })
+      const checkPhone = await userModel.findOne({ phone: phone })
 
       if (checkPhone) return res.status(400).send({ status: false, message: "Phone number is  already registered!!" })
 
