@@ -12,7 +12,7 @@ const createUser = async function (req, res) {
   try {
     let data = req.body;
 
-    const { fname, lname, email, phone, password, address } = data;
+    const { fname, lname, email, phone, password } = data;
 
     if (!isValidRequestBody(data)) {
       return res.status(400).send({ status: false, message: "Please provide data in the request body!", })
@@ -67,56 +67,36 @@ const createUser = async function (req, res) {
     // THIS TECHNIQUE WILL AUTOMATICALLY GENERATE THE SALT & HASH
     let hashedPassword = bcrypt.hashSync(password, 10)
     data.password = hashedPassword      // STORING THE PASSWORD IN DB
-
-    // if(!address|| !isEmpty(address) ){   
-    //   return res.status(400).send({status: false , message:"address is mandatory"})
-    // }
-
-    if (address) {
-      const { shipping, billing } = address;    //(address.shipping= shipping)
-      if (shipping) {
-        const { street, city, pincode } = shipping    //(address.shipping.street = street)
-        if (street) {
-          if (!isValidStreet(address.shipping.street)) { return res.status(400).send({ status: false, message: "Invalid shipping street!" }); }
-
-
-        }
-      }
+    let address = data.address
+    if(!address|| !isEmpty(address) ){   
+      return res.status(400).send({status: false , message:"address is mandatory"})
     }
-    // if(!address.shipping.street){
-    //   return res.status(400).send({status: false , message:"street is mandatory"})
-    // }
+    address = JSON.parse(address)
+    if(!address.shipping){
+      return res.status(400).send({status: false , message:"address.shipping is mandatory"})
 
-    // if (address) {
-    //   data.address = JSON.parse(address)
-    //   if (!data.address.shipping.street)
-    //     return res.status(400).send({ status: false, message: "Shipping Street is required!" });
-
-
-    //   if (!data.address.shipping.city)
-    //     return res.status(400).send({ status: false, message: "Shipping City is required!" });
-
-
-    //   if (!data.address.shipping.pincode) {
-    //     return res.status(400).send({ status: false, message: "Shipping Pincode is required!" });
-    //   }
-    //   if (!validPin(data.address.shipping.pincode)) {
-    //     return res.status(400).send({ status: false, msg: " invalid  pincode " })
-    //   }
-
-    //   if (!data.address.billing.street)
-    //     return res.status(400).send({ status: false, message: "Billing Street is required!" });
-
-    //   if (!data.address.billing.city)
-    //     return res.status(400).send({ status: false, message: "Billing City is required!" });
-
-    //   if (!data.address.billing.pincode) {
-    //     return res.status(400).send({ status: false, message: "Billing Pincode is required!" });
-    //   }
-    //   if (!validPin(data.address.billing.pincode)) {
-    //     return res.status(400).send({ status: false, msg: " invalid  pincode " })
-    //   }
-    // }
+    }
+     if(!address.shipping.street){
+      return res.status(400).send({status: false , message:"shipping.street is mandatory"})
+     }
+    if(!address.shipping.city){
+      return res.status(400).send({status: false , message:"shipping.city is mandatory"})
+    }
+    if(!address.shipping.pincode){
+      return res.status(400).send({status: false , message:"shipping.pincode is mandatory"})
+    }
+    if(!address.billing){
+      return res.status(400).send({status: false , message:"address.billing is mandatory"})
+    }
+    if(!address.billing.street){
+      return res.status(400).send({status: false , message:"billing.street is mandatory"})
+    }
+    if(!address.billing.city){
+      return res.status(400).send({status: false , message:"billing.city is mandatory"})
+    }
+    if(!address.billing.pincode){
+      return res.status(400).send({status: false , message:"billing.pincode is mandatory"})
+    }
 
     let files = req.files; //aws
     if (files && files.length > 0) {
@@ -128,7 +108,7 @@ const createUser = async function (req, res) {
     } else {
       return res.status(400).send({ message: "Files are required!" });
     }
-
+    data.address = address 
     const userDetails = await userModel.create(data);
     return res.status(201).send({ status: true, message: "user successfully created", data: userDetails })
   }
