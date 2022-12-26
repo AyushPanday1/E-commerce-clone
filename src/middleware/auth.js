@@ -5,10 +5,14 @@ const userModel = require('../models/userModel');
 const authentication = async function(req,res,next){
     try{
 
-        let token = req.headers['x-auth-key'];
-        if(!token) return res.status(400).send({status:false,message:"Token must be present in headers!"});
+        let token = req.headers['authorization'];
+        console.log(token)
+      token = token.split(" ")
+      console.log(token)
+        if(!token) return res.status(400).send({status:false,message:"Token is required!"});
 
-         jwt.verify(token , "user-secret-token" , function(err , verification){
+         jwt.verify(token[1] , "user-secret-token" , function(err , verification){
+            console.log(token[1])
             if(err) return res.status(400).send({status:false,message:"Token may be expired or invalid!"})
 
             else req.verification = verification;

@@ -5,13 +5,14 @@ const router = express.Router()
 const userController=require('../controllers/userController')
 const productController = require('../controllers/productController')
 const cartController = require('../controllers/cartController')
+const middleware = require('../middleware/auth')
 
 router.get('/trial-api' , function(req,res){
    res.send("Yes it is working.")
 })
 router.post('/register', userController.createUser)
 router.post('/login',userController.userLogin)
-router.get('/user/:userId/profile', userController.getUser)
+router.get('/user/:userId/profile', middleware.authentication, userController.getUser)
 router.put('/user/:userId/profile' , userController.updateUser)
 
 //////////////////////////////////////////PRODUCT API///////////////////////////////////////////////////////////
