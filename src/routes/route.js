@@ -4,6 +4,7 @@ const router = express.Router()
 
 const userController=require('../controllers/userController')
 const productController = require('../controllers/productController')
+const cartController = require('../controllers/cartController')
 
 router.get('/trial-api' , function(req,res){
    res.send("Yes it is working.")
@@ -20,6 +21,8 @@ router.get('/products/:productId', productController.getProductsById)
 router.put('/products/:productId' , productController.updateProduct)
 router.delete("/products/:productId", productController.deleteProduct)
 
+///////////////////////////////////////CART API//////////////////////////////////////////////////////////////
+ router.post('/users/:userId/cart' , cartController.createCart)
 
 
 module.exports = router;

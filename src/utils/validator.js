@@ -1,3 +1,5 @@
+const { default: mongoose } = require("mongoose")
+
 /*_______________________VALIDATION FOR EMPTY BODY________________________ */
 const isValidRequestBody = function (requestBody) {
     return Object.keys(requestBody).length > 0
@@ -78,5 +80,9 @@ const isValidPrice = (value) => {
     return regex.test(value)
   }
 
-module.exports = {isValidRequestBody,isEmpty,isValidSize,isValidInstallments, isValidPrice, isValidTitle,isValidName,validatePhone,isValidEmail,isValidPassword,validPin,isValidStreet,isValidFile}
+  const isValidId = function(value){
+    return mongoose.Types.ObjectId.isValid(value)
+  }
+
+module.exports = {isValidId, isValidRequestBody,isEmpty,isValidSize,isValidInstallments, isValidPrice, isValidTitle,isValidName,validatePhone,isValidEmail,isValidPassword,validPin,isValidStreet,isValidFile}
 

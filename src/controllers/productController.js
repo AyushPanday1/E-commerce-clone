@@ -45,20 +45,8 @@ const createProduct = async (req, res) => {
         if (currencyFormat != "₹")
             return res.status(400).send({ status: false, msg: "CurrencyFormat will be in ₹" })
 
-
-            // if(isFreeShipping.trim() == 0){
-            //     console.log(isFreeShipping)
-            //      return res.status(400).send({ status: false, message: "isfreeshiping kljkjkjk mandatory" })
-                
-            //   }
-
-
         if (isFreeShipping !=undefined) {
-            // if(isFreeShipping.trim().length == 0) return res.send({msg:"please provide the value"})
-            // if(isFreeShipping == null) {
-            //     return res.status(400).send({ status: false, message: "isfreeshiping is mandatory" })
-
-            // }
+            
             if (!(isFreeShipping == "true" || isFreeShipping == "false")) {
                 return res.status(400).send({ status: false, msg: "isfreeshiping either true or false" })
             }
