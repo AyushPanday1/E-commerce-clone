@@ -52,7 +52,7 @@ const validPin = function(pincode){
 
 /*_______________________VALIDATION FOR STREET ADDRESS________________________ */
 const isValidStreet = function (street){
-    let re = /^.?\s[N]{0,1}([-a-zA-Z0-9]+)\s\w*$/
+    let re = /^[a-zA-Z0-9 -\.]+$/
 
     return re.test(street)
 
