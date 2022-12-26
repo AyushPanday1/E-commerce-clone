@@ -10,61 +10,60 @@ const { isValidRequestBody, isEmpty, isValidName, validatePhone, isValidEmail, i
 
 const createUser = async function (req, res) {
   try {
-    let data = req.body;
 
-    const { fname, lname, email, phone, password } = data;
+    let data = req.body
+
+    const { fname, lname, email, phone, password, profileImage } = data;
 
     if (!isValidRequestBody(data)) {
       return res.status(400).send({ status: false, message: "Please provide data in the request body!", })
     }
 
     if (!fname || !isEmpty(fname)) {
-      return res.status(400).send({ status: false, message: "First Name is required!" });
+      return res.status(400).send({ status: false, message: "fname is mandatory" })
     }
     if (!isValidName(fname)) {
-      return res.status(400).send({ status: false, message: "invalid First Name " })
+      return res.status(400).send({ status: false, message: "fname is not valid" })
     }
 
     if (!lname || !isEmpty(lname)) {
-      return res.status(400).send({ status: false, message: "Last Name is required!" })
+      return res.status(400).send({ status: false, message: "lname is mandatory" })
     }
     if (!isValidName(lname)) {
-      return res.status(400).send({ status: false, message: "invalid Last Name " })
+      return res.status(400).send({ status: false, message: "lname is not valid" })
     }
 
     if (!email || !isEmpty(email)) {
-      return res.status(400).send({ status: false, message: "Email is required!" });
+      return res.status(400).send({ status: false, message: "Email is mandatory" })
     }
     if (!isValidEmail(email)) {
-      return res.status(400).send({ status: false, message: "Invalid email id" })
-
+      return res.status(400).send({ status: false, message: "Email is not valid" })
     }
-    // ------------------------------CHECKING THE DUPLICACY OF EMAIL & PHONE NUMBER------------------------------
-    let unique = await userModel.findOne({ $or: [{ email: email }, { phone: phone }] });
-    if (unique) {
-      if (unique.email == email) {
-        return res.status(400).send({ status: false, message: "This email address already exists, please enter a unique email address!" });
+
+    const unique = await userModel.findOne({ $or: [{email: email},{phone: phone} ]})
+    if(unique){
+      if(unique.email==email){
+        return res.status(400).send({ status: false, message: "Email already exist" })
       }
     }
     if (!phone || !isEmpty(phone)) {
-      return res.status(400).send({ status: false, message: "Phone number is required!" });
+      return res.status(400).send({ status: false, message: "Mobile number is mandatory" })
     }
     if (!validatePhone(phone)) {
-      return res.status(400).send({ status: false, message: "pls provide correct phone " })
+      return res.status(400).send({ status: false, message: "Mobile number is not valid" })
     }
-    if (unique) {
-      if (unique.phone == phone) {
-        return res.status(400).send({ status: false, message: "This phone number already exists, please enter a unique phone number!" });
+    if(unique){
+      if(unique.phone== phone){
+        return res.status(400).send({ status: false, message: "phone number already exist" })
       }
     }
-
     if (!password || !isEmpty(password)) {
-      return res.status(400).send({ status: false, message: "Password is required!" });
+      return res.status(400).send({ status: false, message: "Password is mandatory" })
     }
     if (!isValidPassword(password)) {
-      return res.status(400).send({ status: false, message: " invalid password" })
+      return res.status(400).send({ status: false, message: "Password is not valid" })
     }
-    // THIS TECHNIQUE WILL AUTOMATICALLY GENERATE THE SALT & HASH
+
     let hashedPassword = bcrypt.hashSync(password, 10)
     data.password = hashedPassword      // STORING THE PASSWORD IN DB
     let address = data.address
@@ -119,7 +118,7 @@ const createUser = async function (req, res) {
 }
 
 
-//////////////////////////////////////////USER LOGIN/////////////////////////////////////////////////////
+//___USER LOGIN________________________________________________________________________*/
 
 const userLogin = async function (req, res) {
   try {

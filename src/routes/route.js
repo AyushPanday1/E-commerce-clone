@@ -7,6 +7,7 @@ const productController = require('../controllers/productController')
 const cartController = require('../controllers/cartController')
 const middleware = require('../middleware/auth')
 
+
 router.get('/trial-api' , function(req,res){
    res.send("Yes it is working.")
 })
