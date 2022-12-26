@@ -183,7 +183,39 @@ const userLogin = async function (req, res) {
 
 /////////////////////////////////////////////GET USER API///////////////////////////////////////////////////
 
+const getUser = async function(req,res){
+  try{
+   let userId = req.params.userId;
+   if(!isValidObjectId(userId)){
+      return res.status(400).send({ status: false, message: "Invalid userId!" })
+   }
+   let findUserInDb = await userModel.findById(userId)
+   if(!findUserInDb){
+    return res.status(404).send({ status: false, message: "user not found" })
+   }
+   let userData = {
+    address: findUserInDb.address,
+    _id: findUserInDb.id,
+    fname: findUserInDb.fname,
+    lname: findUserInDb.lname,
+    email: findUserInDb.email,
+    profileImage: findUserInDb.profileImage,
+    phone: findUserInDb.phone,
+    password: findUserInDb.password,
+    createedAt: findUserInDb.createdAt,
+    updatedAt: findUserInDb.updatedAt,
+    _v: findUserInDb.__v
 
+   }
+   return res.status(200).send({status: true, message: "User profile details", data: userData})
+  }
+  catch(error){
+    return res.status(500).send({status: false, messsage: error.message})
+  }
+}
+
+
+/////////////////////////////////////UPDATE USER/////////////////////////////////////////////////////////////
 
 const updateUser = async function (req, res) {
   try {
@@ -311,59 +343,8 @@ const updateUser = async function (req, res) {
 
 
 
-// const getUser = async function (req, res) {
-//   try {
-//     let userIdInParam = req.params.userId
-//     if (!isValidObjectId) {
-//       return res.status(400).send({ status: false, message: "Invalid userId!" })
-//     }
-//     let foo = req.headers.authorization
-//     let token = foo.split(" ")
-//     let decodedToken = jwt.verify(token[1], "user-secret-token")
-//     if (!decodedToken.userId == userIdInParam) {
-//       return res.status(403).send({ status: false, Message: "Forbidden!!" })
-//     }
 
-//     let data = await userModel.findOne({ userId: userIdInParam })
-//     if (!data) {
-//       return res.status(404).send({ status: false, message: "User not found!" })
-//     } else {
-//       return res.status(200).send({ status: true, message: "User profile dtails", data: data })
-//     }
-//   } catch (error) {
-//     return res.status(500).send({ status: false, message: error.message })
-//   }
-// }
-const getUser = async function(req,res){
-  try{
-   let userId = req.params.userId;
-   if(!isValidObjectId(userId)){
-      return res.status(400).send({ status: false, message: "Invalid userId!" })
-   }
-   let findUserInDb = await userModel.findById(userId)
-   if(!findUserInDb){
-    return res.status(404).send({ status: false, message: "user not found" })
-   }
-   let userData = {
-    address: findUserInDb.address,
-    _id: findUserInDb.id,
-    fname: findUserInDb.fname,
-    lname: findUserInDb.lname,
-    email: findUserInDb.email,
-    profileImage: findUserInDb.profileImage,
-    phone: findUserInDb.phone,
-    password: findUserInDb.password,
-    createedAt: findUserInDb.createdAt,
-    updatedAt: findUserInDb.updatedAt,
-    _v: findUserInDb.__v
 
-   }
-   return res.status(200).send({status: true, message: "User profile details", data: userData})
-  }
-  catch(error){
-    return res.status(500).send({status: false, messsage: error.message})
-  }
-}
 
 
 
