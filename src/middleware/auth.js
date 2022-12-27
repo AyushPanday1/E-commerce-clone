@@ -7,13 +7,12 @@ const authentication = async function(req,res,next){
 
         let token = req.headers['authorization'];
         console.log(token)
-      token = token.split(" ")
-      console.log(token)
         if(!token) return res.status(400).send({status:false,message:"Token is required!"});
-
+        token = token.split(" ")
+        console.log(token)
          jwt.verify(token[1] , "user-secret-token" , function(err , verification){
             console.log(token[1])
-            if(err) return res.status(400).send({status:false,message:"Token may be expired or invalid!"})
+            if(err) return res.status(401).send({status:false,message:"Token may be expired or invalid!"})
 
             else req.verification = verification;
 
@@ -37,7 +36,7 @@ const authorisation = async function(req,res,next){
 
        if(!checkInDB) return res.status(404).send({status:false,message:"No related user id found In DB.(authorisation error)"})
 
-       if(checkInDB._id != req.verification._id) return res.status(403).send({status:false,message:"You are not authorised person."});
+       if(checkInDB.userId != req.verification._id) {return res.status(403).send({status:false,message:"You are not authorised person."})};
 
        next();
        

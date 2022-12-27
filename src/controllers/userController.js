@@ -147,7 +147,7 @@ const userLogin = async function (req, res) {
       }
 
       let createToken = jwt.sign({userId: findUser.id.toString()}, "user-secret-token",{ expiresIn: "30m" })
-      // res.setHeader('x-auth-key', createToken)
+      res.setHeader('authorization', createToken)
       let finalResponse = {
         userId: findUser.id,
         token: createToken
