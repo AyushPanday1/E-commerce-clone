@@ -9,7 +9,7 @@ let { isValidObjectId } = require('mongoose')
 const createProduct = async (req, res) => {
     try {
         let data = req.body;
-        let { title, description, price, currencyId, currencyFormat, isFreeShipping, productImage, style, availableSizes, installments, deletedAt, isDeleted } = data
+        let { title, description, price, currencyId, currencyFormat, isFreeShipping, productImage, style, availableSizes, installments } = data
         if (Object.keys(data).length == 0) {
             return res.status(400).send({ status: false, message: " body can not be empty" })
         }
@@ -216,7 +216,7 @@ const updateProduct = async function (req, res) {
         const updateElements = {};
 
         if (title) {
-            if (!isValidTitle(title)) {
+            if (!isValidTitle(title)|| !isEmpty(title)) {
                 return res.status(400).send({ status: false, message: "Title to be updated is invalid." })}
 
             const checkTitle = await ProductModel.findOne({title:title})
@@ -312,4 +312,4 @@ const deleteProduct = async function(req,res){
     }
 }
 
-module.exports = { createProduct, getProductsById , updateProduct , deleteProduct}
+module.exports = { createProduct, getProduct ,getProductsById , updateProduct , deleteProduct}
