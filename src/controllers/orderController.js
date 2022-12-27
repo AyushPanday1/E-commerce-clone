@@ -88,48 +88,73 @@ const createOrder = async function(req,res){
 }
 
 /**UPDATE ORDER________________________________________________________________________________________ */
-const updateOrder = async function (req, res) {
-    try {
-      let userId = req.params.userId;
-  
-      if (!isValidObjectId(userId))
-        return res.status(400).send({ status: false, message: "Invalid userId" });
-  
-      let data = req.body;
-      let { status, orderId } = data;
-      if (!isValidRequestBody(data)) return res.status(400).send({ status: false, message: "Please provide data in the request body or files!!" });
-  
-      if (!isValidObjectId(orderId))
-        return res.status(400).send({ status: false, message: "Invalid orderId" });
-  
-      let orderDetails = await orderModel.findOne({ _id: orderId, isDeleted: false });
-  
-      if (!["pending", "completed", "cancelled"].includes(status)) {
-        return res.status(400).send({status: false,message: "status should be from [pending, completed, cancelled]"});
-      }
-  
-      if (orderDetails.status === "completed") {
-        return res.status(400).send({status: false,message: "Order completed, now its status can not be updated"});
-      }
-  
-      if (orderDetails.cancellable === false && status == "cancelled") {
-        return res.status(400).send({ status: false, message: "Order is not cancellable" });
-      } else {
-        if (status === "pending") {
-          return res.status(400).send({ status: false, message: "order status is already pending" });
-        }
-  
-        let orderStatus = await orderModel.findOneAndUpdate(
-          { _id: orderId },
-          { $set: { status: status } },
-          { new: true }
-        );
-        return res.status(200).send({ status: true, message: "Success", data: orderStatus});
-      }
-    } catch (error) {
-      res.status(500).send({ status: false, error: error.message });
+updateOrder = async function (req, res) {
+
+  try {
+
+    let userId = req.params.userId
+    let data = req.body
+    let { status, orderId } = data
+
+    if (!isValidRequestBody(data))
+      return res.status(400).send({status: false,message: "Please provide data body"})
+
+    if (!isValidId(orderId))
+      return res.status(400).send({ status: false, message: "Invalid orderId" })
+
+    let orderDetails = await orderModel.findOne({_id: orderId, isDeleted: false})
+
+    if(!orderDetails){
+      return res.status(404).send({status: false, message: "This order is not present"})
     }
-  };
+
+
+
+    if(!status)
+      return res.status(400).send({status: false,message: "Please provide status"})
+
+    if (!["pending", "completed", "cancelled"].includes(status)) {
+      return res.status(400).send({status: false, message: "status should be pending, completed and cancelled only"})
+    }
+
+    if (orderDetails.status === "pending") {
+      if(status === "pending"){
+        return res.status(400).send({status: false,message: "Order is already in pending stage"})
+      }
+  }
+
+    if (orderDetails.status === "completed") {
+        if(data.status === "pending"){
+          return res.status(400).send({status: false,message: "Order completed cannnot set status to Pending stage"})
+        }
+        if(status === "completed"){
+          return res.status(400).send({status: false,message: "Order is already in Completed stage"})
+        }
+    }
+
+    if (orderDetails.cancellable === false){
+      return res.status(400).send({ status: false, message: "Order is not cancellable" })
+    } else {
+      if (status === "pending") {
+        return res.status(400).send({ status: false, message: "Order cancelled cannnot set status to Pending stage" })
+      }
+      if(orderDetails.status === "cancelled" && (status === "cancelled" || status == "completed")){
+          return res.status(400).send({status: false,message: "Order is cancelled"})
+        }
+
+      let orderStatus = await orderModel.findOneAndUpdate(
+        { _id: orderId },
+        { $set: { status: status } },
+        { new: true }
+      )
+
+      return res.status(200).send({ status: true,message: "Success", data: orderStatus })
+    }
+  } 
+  catch (error) {
+    res.status(500).send({ status: false, error: error.message })
+  }
+}
 
   
 module.exports={createOrder, updateOrder}
