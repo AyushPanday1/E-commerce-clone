@@ -15,7 +15,7 @@ const middleware = require('../middleware/auth')
 router.post('/register', userController.createUser)
 router.post('/login',userController.userLogin)
 router.get('/user/:userId/profile', middleware.authentication, userController.getUser)
-router.put('/user/:userId/profile' , userController.updateUser)
+router.put('/user/:userId/profile' ,middleware.authentication,middleware.authorisation, userController.updateUser)
 
 /*PRODUCT API_______________________________________________________________________*/
 
@@ -26,16 +26,16 @@ router.put('/products/:productId' , productController.updateProduct)
 router.delete("/products/:productId", productController.deleteProduct)
 
 /**CART API________________________________________________________________________ */
-router.post('/users/:userId/cart' , middleware.authentication,middleware.authorisation, cartController.createCart)  
-router.put('/users/:userId/cart' , cartController.updateCart)
-router.get('/users/:userId/cart', cartController.getCartDetails)
-router.delete('/users/:userId/cart', cartController.cartDeletion)
+router.post('/users/:userId/cart' , middleware.authentication, cartController.createCart)  
+router.put('/users/:userId/cart' ,middleware.authentication, cartController.updateCart)
+router.get('/users/:userId/cart', middleware.authentication,cartController.getCartDetails)
+router.delete('/users/:userId/cart',middleware.authentication, cartController.cartDeletion)
 
 
 
 /**ORDER API_______________________________________________________________________ */
-router.post('/users/:userId/orders' , orderController.createOrder)
-router.put('/users/:userId/orders' , orderController.updateOrder)
+router.post('/users/:userId/orders' ,middleware.authentication,middleware.authorisation, orderController.createOrder)
+router.put('/users/:userId/orders' ,middleware.authentication,middleware.authorisation, orderController.updateOrder)
 
 router.all('/*',function(req,res){
    res.send("route is wrong" )

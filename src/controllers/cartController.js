@@ -34,7 +34,7 @@ const createCart = async function (req, res) {
         if (!quantity) {
             quantity = 1  // MINIMUM QUANTITY 1 || ATLEAST 1 QUANTITY MUST BE PRESENT
         }
-        // quantity = JSON.parse(quantity)
+        quantity = JSON.parse(quantity)
         if (quantity || quantity == '') {
             if (!isValidNumbers(quantity)) {
                 return res.status(400).send({ status: false, message: "Quantity is not Valid" })
@@ -67,7 +67,7 @@ const createCart = async function (req, res) {
             let price = findUserCart.totalPrice + quantity * findProduct.price
             console.log(price)
             let arr = findUserCart.items
-            for (let i = 0; i > arr.length; i++) {
+            for (let i = 0; i < arr.length; i++) {
                 if (arr[i].productId.toString() == productId) {
                     arr[i].quantity += quantity
                     let updatedCart = {
