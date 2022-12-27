@@ -203,7 +203,8 @@ const updateUser = async function (req, res) {
     if (!userId) return res.status(400).send({ status: false, message: "Please pass userid in params!!" })
 
     let data = req.body;
-    const { fname, lname, email, phone, password, address } = data;
+    let files = req.files;
+    const { fname, lname, email, phone, password, address ,profileImage } = data;
     if (!isValidRequestBody(data)) return res.status(400).send({ status: false, message: "Please provide data in the request body or files!!" });
 
     /*TAKING ALL DATA IN A KEYWORD TO REDUCE DB CALLS_______________________________ */
@@ -307,6 +308,13 @@ const updateUser = async function (req, res) {
         }
       }
     }
+
+    if(profileImage) {
+       if(!isValidFile(profileImage)) return res.status(400),send({status:false,message:"Profile image is invalid and only can be jpeg or png"})
+        let profileImgUrl = await aws.uploadFile(files[0]);
+        updateData.profileImage = profileImgUrl;
+    }
+
 
     const newUpdatedData = await userModel.findOneAndUpdate({ _id: userId }, updateData, { new: true })
 
