@@ -27,8 +27,8 @@ const authentication = async function(req,res,next){
 
 const authorisation = async function(req,res,next){
     try{
-        let token=req.verification
-        let tokenUser=token.userId
+        let token=req.verification.userId
+        // let tokenUser=token.userId
        let userId = req.params.userId;
 
        if(!isValidId(userId)) return res.status(400).send({status:false,message:"ID is invalid."});
@@ -37,7 +37,7 @@ const authorisation = async function(req,res,next){
 
        if(!checkInDB) return res.status(404).send({status:false,message:"No related user id found In DB.(authorisation error)"})
 
-       if(tokenUser != userId) {return res.status(403).send({status:false,message:"You are not authorised person."})};
+       if(token != userId) {return res.status(403).send({status:false,message:"You are not authorised person."})};
 
        next();
        
