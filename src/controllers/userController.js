@@ -6,7 +6,7 @@ const { isValidObjectId } = require("mongoose")
 
 const { isValidRequestBody, isEmpty, isValidName, validatePhone, isValidEmail, isValidPassword, validPin, isValidStreet, isValidFile } = require('../utils/validator');
 
-
+/**CREATE USER API____________________________________________________________________________________ */
 
 const createUser = async function (req, res) {
   try {
@@ -160,7 +160,7 @@ const userLogin = async function (req, res) {
   }
 }
 
-/////////////////////////////////////////////GET USER API///////////////////////////////////////////////////
+/**GET USER API______________________________________________________________________________ */
 
 const getUser = async function(req,res){
   try{
@@ -194,7 +194,7 @@ const getUser = async function(req,res){
 }
 
 
-/////////////////////////////////////UPDATE USER/////////////////////////////////////////////////////////////
+/**UPDATE USER_____________________________________________________________________ */
 
 const updateUser = async function (req, res) {
   try {

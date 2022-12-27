@@ -5,7 +5,7 @@ const productModel = require('../models/productModel')
 let { isValidId, isValidNumbers} = require('../utils/validator')
 
 
-
+/**CREATE CART________________________________________________________________________________ */
 const createCart = async function (req, res) {
     try {
         let userId = req.params.userId
@@ -95,7 +95,7 @@ const createCart = async function (req, res) {
     }
 }
 
-
+/**UPDATE CART___________________________________________________________________________________________ */
 const updateCart = async function (req, res) {
     try {
 
@@ -138,9 +138,8 @@ const updateCart = async function (req, res) {
             
       
         if (removeProduct == 0) {
-        const productRemove = await cartModel.findOneAndUpdate(
-         { _id: cartId },
-           {$pull: { items: { productId: productId } },
+        const productRemove = await cartModel.findOneAndUpdate({ _id: cartId },
+              {$pull: { items: { productId: productId } },
                     totalPrice: checkProductinDB.totalPrice - priceChange,
                     totalItems: checkProductinDB.totalItems - 1,},{ new: true });
        
@@ -160,8 +159,7 @@ const updateCart = async function (req, res) {
       
        cart[i].quantity = cart[i].quantity - 1;
        const updatedCart = await cartModel.findByIdAndUpdate({ _id: cartId },
-                           {items: cart,totalPrice: checkCartinDB.totalPrice - checkProductinDB.price,},
-                           { new: true });
+                           {items: cart,totalPrice: checkCartinDB.totalPrice - checkProductinDB.price,},{ new: true });
                
        return res.status(200).send({status: true,message: "Success",data: updatedCart,}); }}
 
@@ -170,6 +168,8 @@ const updateCart = async function (req, res) {
         return res.status(500).send({ status: false, message: error.message })
     }
 }
+
+/**GET CART________________________________________________________________________________________________ */
 const getCartDetails = async function (req, res) {
     try {
       let userId = req.params.userId;
@@ -189,7 +189,7 @@ const getCartDetails = async function (req, res) {
   };
 
 
-//=====================deleteApi=================
+  /**DELETE CART_____________________________________________________________________________ */
   const cartDeletion = async function (req, res) {
     try {
       
@@ -217,4 +217,6 @@ const getCartDetails = async function (req, res) {
       return res.status(500).send({ status: false, msg: error.message });
     }
   };
+
+  
 module.exports = { createCart, updateCart, getCartDetails,cartDeletion }

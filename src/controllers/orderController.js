@@ -3,6 +3,8 @@ const cartModel = require("../models/cartModel")
 const ordermodel = require("../models/ordermodel")
 const userModel = require("../models/userModel")
 
+
+/**CREATE ORDER__________________________________________________________________________ */
 const createOrder=async (req,res)=>{
     try{
     let userId=req.params.userId
@@ -26,6 +28,8 @@ const createOrder=async (req,res)=>{
         return res.status(500).send({Status:false, Message:error.message})
     }
 }
+
+/**UPDATE ORDER________________________________________________________________________________________ */
 const updateOrder = async function (req, res) {
     try {
       let userId = req.params.userId;
@@ -67,4 +71,6 @@ const updateOrder = async function (req, res) {
       res.status(500).send({ status: false, error: error.message });
     }
   };
+
+  
 module.exports={createOrder, updateOrder}
