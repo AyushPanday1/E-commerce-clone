@@ -54,7 +54,7 @@ const createProduct = async (req, res) => {
         // console.log(isFreeShipping.length)
          
 
-        ////////////////////////////AWS FILE UPLOADING/////////////////////////////////////////////////////
+        /*___________________________AWS FILE UPLOADING___________________________________________*/
         let files = req.files
         if (files && files.length > 0) {
             if (!isValidFile(files[0].originalname)) {
@@ -81,7 +81,6 @@ const createProduct = async (req, res) => {
         }
 
 
-        //////////////////////////////CREATING PRODUCT////////////////////////////////////////////////////////
         let productCreate = await productModel.create(data)
         return res.status(201).send({ status: true, message: "success", data: productCreate })
     }
