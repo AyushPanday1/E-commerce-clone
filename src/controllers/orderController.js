@@ -2,6 +2,7 @@ const { isValidObjectId } = require("mongoose")
 const cartModel = require("../models/cartModel")
 const ordermodel = require("../models/ordermodel")
 const userModel = require("../models/userModel")
+const {isValidRequestBody}=require('../utils/validator')
 
 const createOrder=async (req,res)=>{
     try{
@@ -26,6 +27,9 @@ const createOrder=async (req,res)=>{
         return res.status(500).send({Status:false, Message:error.message})
     }
 }
+
+
+
 const updateOrder = async function (req, res) {
     try {
       let userId = req.params.userId;
@@ -35,6 +39,7 @@ const updateOrder = async function (req, res) {
   
       let data = req.body;
       let { status, orderId } = data;
+      if (!isValidRequestBody(data)) return res.status(400).send({ status: false, message: "Please provide data in the request body or files!!" });
   
       if (!isValidObjectId(orderId))
         return res.status(400).send({ status: false, message: "Invalid orderId" });
