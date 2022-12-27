@@ -95,6 +95,8 @@ updateOrder = async function (req, res) {
     let userId = req.params.userId
     let data = req.body
     let { status, orderId } = data
+    if (!isValidId(userId))
+    return res.status(400).send({ status: false, message: "Invalid userId" });
 
     if (!isValidRequestBody(data))
       return res.status(400).send({status: false,message: "Please provide data body"})
