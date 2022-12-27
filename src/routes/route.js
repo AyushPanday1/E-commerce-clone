@@ -10,9 +10,6 @@ const orderController = require('../controllers/orderController')
 const middleware = require('../middleware/auth')
 
 
-router.get('/trial-api' , function(req,res){
-   res.send("Yes it is working.")
-})
 
 /* USER API________________________________________________________________________*/
 router.post('/register', userController.createUser)
@@ -39,5 +36,9 @@ router.delete('/users/:userId/cart', cartController.cartDeletion)
 /**ORDER API_______________________________________________________________________ */
 router.post('/users/:userId/orders' , orderController.createOrder)
 router.put('/users/:userId/orders' , orderController.updateOrder)
+
+router.all('/*',function(req,res){
+   res.send("route is wrong" )
+})
 
 module.exports = router;
