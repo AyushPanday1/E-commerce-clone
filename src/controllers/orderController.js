@@ -5,31 +5,6 @@ const userModel = require("../models/userModel")
 const {isValidRequestBody, isEmpty, isValidId}=require('../utils/validator')
 
 
-/**CREATE ORDER__________________________________________________________________________ */
-// const createOrder=async (req,res)=>{
-//     try{
-//     let userId=req.params.userId
-//     let user=await userModel.findOne({_id:userId})
-//     if(!user){
-//         return res.status(404).send({status:false, Message:"User not found"})
-//     }else{
-//         let cartId=req.body.cartId
-//         console.log(cartId)
-//         if(!isValidObjectId(cartId)){
-//             return res.status(400).send({status:false, Message:"Invalid cartID"})
-//         }
-//         let cartDetails=await cartModel.findById(cartId)
-//         if(!cartDetails){
-//             return res.status(400).send({status:false, Message:"Cart not found"})
-//         }else{
-//         let order=await ordermodel.create(cartDetails)
-//         return res.status(201).send({Status:true, Message:"Order created", data:order})
-//         }
-//     }} catch(error){
-//         return res.status(500).send({Status:false, Message:error.message})
-//     }
-// }
-
 const createOrder = async function(req,res){
   try{
     let userId = req.params.userId;
@@ -52,9 +27,6 @@ const createOrder = async function(req,res){
     let findCart = await cartModel.findOne({_id:cartId})
     if(!findCart){
       return res.status(404).send({status: false, message: `this cartId ${cartId} does not exists in the DB`})
-    }
-    if(findCart.userId != userId){
-      return res.status(400).send({status: false, message: "userId is not matching(you are not allowed to create this order)"})
     }
     if(findCart.items.length == 0){
       return res.status(400).send({status: false, message: "your cart is empty please add product in cart"})

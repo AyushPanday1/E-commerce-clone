@@ -70,7 +70,7 @@ const createProduct = async (req, res) => {
         if (!isEmpty(style)) {
             return res.status(400).send({ status: false, message: "style can not be empty" })
         }
-        if (availableSizes) {
+        if (availableSizes) {       
             if (availableSizes != "S" && availableSizes != "XS" && availableSizes != "M" && availableSizes != "X" && availableSizes != "L" && availableSizes != "XXL" && availableSizes != "XL") {
                 return res.status(400).send({ status: false, message: "Available sizes are XS,S,M,L,X,XXL,XL, please enter available size" })
             }
@@ -279,7 +279,7 @@ const updateProduct = async function (req, res) {
       
         let updateData = await ProductModel.findOneAndUpdate({_id:productId} , updateElements, {new:true})
 
-        return res.status(200).send({status:false,message:"Data updated successfully." , data:updateData})
+        return res.status(200).send({status:true,message:"Data updated successfully." , data:updateData})
 
     } catch (error) {
         return res.status(500).send({ status: false, message: error.message })

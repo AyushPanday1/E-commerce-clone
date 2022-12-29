@@ -39,7 +39,7 @@ const createUser = async function (req, res) {
     if (!isValidEmail(email)) {
       return res.status(400).send({ status: false, message: "Email is not valid" })
     }
-
+    
     const unique = await userModel.findOne({ $or: [{email: email},{phone: phone} ]})
     if(unique){
       if(unique.email==email){

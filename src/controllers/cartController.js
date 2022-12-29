@@ -54,7 +54,7 @@ const createCart = async function (req, res) {
                 totalItems: 1
             }
             let newCart = await cartModel.create(createData);
-            return res.status(201).send({ status: false, message: "success", data: newCart })
+            return res.status(201).send({ status: true, message: "success", data: newCart })
         }
 
         if (findUserCart) {
@@ -65,7 +65,7 @@ const createCart = async function (req, res) {
                 return res.status(400).send({ status: false, message: "Cart id is not matching" })
             }
             let price = findUserCart.totalPrice + quantity * findProduct.price
-            console.log(price)
+        
             let arr = findUserCart.items
             for (let i = 0; i < arr.length; i++) {
                 if (arr[i].productId.toString() == productId) {
