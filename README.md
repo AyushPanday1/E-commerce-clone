@@ -4,6 +4,8 @@
 
 ### Implemented authentication and authorization for security purposes. Used hashing algorithm bcrypt.
 
+### Passed Regex according to schema validation.
+
 ### Models:
 1. UserSchema
 2. CartSchema
