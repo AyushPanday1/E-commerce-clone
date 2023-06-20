@@ -2,7 +2,7 @@
 
 ## This is a clone project of online shopping websites such as flipkart and amazon. This project is based on node.js, express framework, Mongo-db, JWT and aws-s3.
 
-### Implemented authentication and authorization for security purposes. Used hashing algorithm bcrypt.
+### Implemented authentication and authorization for security purposes. Used bcrypt hashing algorithm.
 
 ### Passed Regex according to schema validation.
 
