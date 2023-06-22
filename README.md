@@ -1,6 +1,7 @@
 # Project: Shopping-cart
 
 ## This is a clone project of online shopping websites such as flipkart and amazon. This project is based on node.js, express framework, Mongo-db, JWT and aws-s3.
+<img alt='coding' src='https://i1.wp.com/billionaire365.com/wp-content/uploads/2019/02/Ecommerce-Website.jpg?fit=2048%2C1452&ssl=1'/>
 
 ### Implemented authentication and authorization for security purposes. Used bcrypt hashing algorithm.
 
