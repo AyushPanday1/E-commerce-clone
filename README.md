@@ -1,8 +1,7 @@
-#Lithium
-## Project - Products Management
+## Project - E-commerce Clone
 
 ### Key points
-- In this project we will work feature wise. That means we pick one object like user, book, blog, etc at a time. We work through it's feature. The steps would be:
+- In this project we will work feature wise. That means we pick one object like user, book, product, etc at a time. We work through it's feature. The steps would be:
   1) We create it's model.
   2) We build it's APIs.
   3) We test these APIs.
