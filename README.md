@@ -30,6 +30,7 @@ The E-Commerce Clone backend is developed using the following technologies:
 - **Express.js:** A minimalist web application framework for Node.js.
 - **MongoDB:** A NoSQL database for storing and managing e-commerce data.
 - **Mongoose:** An elegant MongoDB object modeling tool.
+- **Tools:** Postman(For testing Api's), GIT(for branch code management and source code handling), VS code(For writing code), Jwt(For auth purpose)
 
 ## Usage
 
