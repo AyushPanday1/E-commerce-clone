@@ -1,4 +1,4 @@
-# E-Commerce Clone - MERN Stack Backend 🛒🚀
+# E-Commerce Clone - MERN Stack Backend 🛒
 
 Welcome to the backend repository of the E-Commerce Clone! 🛍️ This project is a full-fledged e-commerce platform built with the MERN (MongoDB, Express.js, React, Node.js) stack. The backend part of this repository handles the server-side logic, database management, and API integration to power the online shopping experience.
 
